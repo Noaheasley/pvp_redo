@@ -4,11 +4,6 @@ using System.Text;
 
 namespace HelloWorld
 {
-    struct Player
-    {
-        public int health;
-        public int damage;
-    }
     struct Item
     {
         public int statBoost;
@@ -16,11 +11,11 @@ namespace HelloWorld
 
     class Game
     {
-        bool _gameOver = false;
-        Player _player1;
-        Player _player2;
-        Item longSword;
-        Item dagger;
+        private bool _gameOver = false;
+        private Player _player1;
+        private Player _player2;
+        private Item longSword;
+        private Item dagger;
         //Run the game
         public void Run()
         {
@@ -33,21 +28,11 @@ namespace HelloWorld
             End();
         }
 
-        //initalizes the players stats
-        public void InitalizePlayer()
-        {
-            _player1.health = 100;
-            _player1.damage = 5;
-
-            _player2.health = 100;
-            _player2.damage = 5;
-        }
-
         //initalizes the item stats
         public void InitalizeItems()
         {
-            longSword.statBoost = 15;
-            dagger.statBoost = 10;
+            longSword.statBoost = 200;
+            dagger.statBoost = 150;
         }
 
         //void for input
@@ -74,66 +59,64 @@ namespace HelloWorld
         //equips items to the player
         public void EquipItem()
         {
-            GetInput(out char input, "LongSword", "Dagger", "\nchoose your weapon, Player1");
+            GetInput(out char input, "LongSword", "Dagger", "\nchoose your weapon, player 1");
             
             if (input == '1')
             {
-                _player1.damage += longSword.statBoost;
+                _player1.EquipItem(longSword);
             }
             else if (input == '2')
             {
-                _player1.damage += dagger.statBoost;
+                _player1.EquipItem(dagger);
             }
             else
             {
                 Console.WriteLine("invalid input");
             }
 
-            GetInput(out input, "LongSword", "Dagger", "choose your weapon, Player2");
+            GetInput(out input, "LongSword", "Dagger", "choose your weapon, player 2");
 
             if (input == '1')
             {
-                _player2.damage += longSword.statBoost;
+                _player2.EquipItem(longSword);
             }
             else if (input == '2')
             {
-                _player2.damage += dagger.statBoost;
+                _player2.EquipItem(dagger);
             }
 
             Console.WriteLine("\nPlayer1 stats");
-            ViewStats(_player1);
+            _player1.PrintStats();
 
             Console.WriteLine("\nPlayer2 stats");
-            ViewStats(_player2);
+            _player2.PrintStats();
             Console.ReadKey();
             Console.Clear();
         }
 
-        public void ViewStats(Player player)
+        public void CreateCharacter(ref Player player)
         {
-            Console.WriteLine("Health: " + player.health);
-            Console.WriteLine("Damage: " + player.damage);
+            Console.WriteLine("what is your name?");
+            string name = Console.ReadLine();
+            player = new Player(name, 100, 10);
         }
 
         public void startBattle()
         {
             Console.WriteLine("BATTLE");
-            while(_player1.health > 0 && _player2.health > 0)
+            while(_player1.GetIsAlive() && _player2.GetIsAlive())
             {
-                Console.WriteLine("\n[Player1 stats]");
-                ViewStats(_player1);
+                _player1.PrintStats();
 
-                Console.WriteLine("\n[Player2 stats]");
-                ViewStats(_player2);
+                
+                _player2.PrintStats();
 
                 char input;
                 GetInput(out input, "attack", "Scream", "\nPlayer1's turn");
                 if(input == '1')
                 {
                     Console.Clear();
-                    _player2.health -= _player1.damage;
-                    Console.WriteLine("\nPlayer1 dealt " + _player1.damage);
-                    Console.WriteLine("Player2 has " + _player2.health + " health remainging");
+                    _player1.Attack(_player2);
                 }
                 else if(input == '2')
                 {
@@ -141,42 +124,24 @@ namespace HelloWorld
                     Console.WriteLine("\nPlayer1 did a funny scream");
                 }
 
-                if(_player2.health <= 0)
-                {
-                    Console.WriteLine("Player2 has been defeated");
-                    Console.ReadKey();
-                    _gameOver = true;
-                    Console.Clear();
-                    return;
-                }
 
                 Console.WriteLine("\n[Player1 stats]");
-                ViewStats(_player1);
+                _player1.PrintStats();
 
                 Console.WriteLine("\n[Player2 stats]");
-                ViewStats(_player2);
+                _player2.PrintStats();
 
 
                 GetInput(out input, "attack", "Scream", "\nPlayer2's turn");
                 if (input == '1')
                 {
                     Console.Clear();
-                    _player1.health -= _player2.damage;
-                    Console.WriteLine("\nPlayer2  has dealt " + _player2.damage);
-                    Console.WriteLine("Player1 has " + _player1.health + " health remaining");
+                    _player2.Attack(_player1);
                 }
                 else if (input == '2')
                 {
                     Console.Clear();
                     Console.WriteLine("\nPlayer2 did a funny scream");
-                }
-                if (_player1.health <= 0)
-                {
-                    Console.WriteLine("Player1 has been defeated");
-                    Console.ReadKey();
-                    _gameOver = true;
-                    Console.Clear();
-                    return;
                 }
             }
         }
@@ -184,7 +149,8 @@ namespace HelloWorld
         //Performed once when the game begins
         public void Start()
         {
-            InitalizePlayer();
+            CreateCharacter(ref _player1);
+            CreateCharacter(ref _player2);
             InitalizeItems();
         }
 
@@ -198,15 +164,7 @@ namespace HelloWorld
         //Performed once when the game ends
         public void End()
         {
-            if (_player1.health <= 0)
-            {
-                Console.WriteLine("Player1 lost, press any key to end the game.");
 
-            }
-            else if(_player2.health <= 0)
-            {
-                Console.WriteLine("Player2 lost, press any key to end the game.");
-            }
         }
     }
 }
