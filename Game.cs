@@ -4,18 +4,14 @@ using System.Text;
 
 namespace HelloWorld
 {
-    struct Item
-    {
-        public int statBoost;
-    }
 
     class Game
     {
         private bool _gameOver = false;
         private Player _player1;
         private Player _player2;
-        private Item longSword;
-        private Item dagger;
+        private Item _longSword;
+        private Item _dagger;
         //Run the game
         public void Run()
         {
@@ -28,12 +24,8 @@ namespace HelloWorld
             End();
         }
 
-        //initalizes the item stats
-        public void InitalizeItems()
-        {
-            longSword.statBoost = 200;
-            dagger.statBoost = 150;
-        }
+
+
 
         //void for input
         public void GetInput(out char input, string option1, string option2, string query)
@@ -63,11 +55,11 @@ namespace HelloWorld
             
             if (input == '1')
             {
-                _player1.EquipItem(longSword);
+                _player1.AddItemToInv(_longSword, 0);
             }
             else if (input == '2')
             {
-                _player1.EquipItem(dagger);
+                _player1.AddItemToInv(_dagger, 0);
             }
             else
             {
@@ -78,11 +70,11 @@ namespace HelloWorld
 
             if (input == '1')
             {
-                _player2.EquipItem(longSword);
+                _player2.AddItemToInv(_dagger, 0);
             }
             else if (input == '2')
             {
-                _player2.EquipItem(dagger);
+                _player2.AddItemToInv(_dagger, 0);
             }
 
             Console.WriteLine("\nPlayer1 stats");
@@ -98,7 +90,7 @@ namespace HelloWorld
         {
             Console.WriteLine("what is your name?");
             string name = Console.ReadLine();
-            player = new Player(name, 100, 10);
+            player = new Player(name, 100, 10, 5);
         }
 
         public void startBattle()
@@ -112,7 +104,7 @@ namespace HelloWorld
                 _player2.PrintStats();
 
                 char input;
-                GetInput(out input, "attack", "Scream", "\nPlayer1's turn");
+                GetInput(out input, "Attack", "Repair weapon", "\nPlayer1's turn");
                 if(input == '1')
                 {
                     Console.Clear();
@@ -124,7 +116,15 @@ namespace HelloWorld
                     Console.WriteLine("\nPlayer1 did a funny scream");
                 }
 
-
+                if(_player2.GetIsAlive(false))
+                {
+                    Console.WriteLine(_player2.GetName() + " has been killed");
+                    Console.WriteLine("Press any button to continue");
+                    Console.WriteLine(">");
+                    Console.ReadKey();
+                    _gameOver = true;
+                    return;
+                }
                 Console.WriteLine("\n[Player1 stats]");
                 _player1.PrintStats();
 
@@ -143,15 +143,18 @@ namespace HelloWorld
                     Console.Clear();
                     Console.WriteLine("\nPlayer2 did a funny scream");
                 }
+
             }
         }
 
         //Performed once when the game begins
         public void Start()
         {
+            _longSword = new Item("longSword", 40);
+            _dagger = new Item("dagger", 20);
             CreateCharacter(ref _player1);
             CreateCharacter(ref _player2);
-            InitalizeItems();
+
         }
 
         //Repeated until the game ends
@@ -164,7 +167,7 @@ namespace HelloWorld
         //Performed once when the game ends
         public void End()
         {
-
+            Console.WriteLine("game over");
         }
     }
 }
