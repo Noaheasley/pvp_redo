@@ -12,6 +12,7 @@ namespace HelloWorld
         private Player _player2;
         private Item _longSword;
         private Item _dagger;
+
         //Run the game
         public void Run()
         {
@@ -23,8 +24,6 @@ namespace HelloWorld
             }
             End();
         }
-
-
 
 
         //void for input
@@ -42,6 +41,27 @@ namespace HelloWorld
             {
                 input = Console.ReadKey().KeyChar;
                 if(input != '1' && input != '2')
+                {
+                    Console.WriteLine("invalid input");
+                }
+            }
+        }
+
+        public void GetInput(out char input, string option1, string option2, string option3, string query)
+        {
+            input = ' ';
+            //prints out the question
+            Console.WriteLine(query);
+            //prints out the option
+            Console.WriteLine("1. " + option1);
+            Console.WriteLine("2. " + option2);
+            Console.WriteLine("3. " + option3);
+            Console.WriteLine(">");
+
+            while (input != '1' && input != '2' && input != '3')
+            {
+                input = Console.ReadKey().KeyChar;
+                if (input != '1' && input != '2' && input != '3')
                 {
                     Console.WriteLine("invalid input");
                 }
@@ -70,7 +90,7 @@ namespace HelloWorld
 
             if (input == '1')
             {
-                _player2.AddItemToInv(_dagger, 0);
+                _player2.AddItemToInv(_longSword, 0);
             }
             else if (input == '2')
             {
@@ -93,6 +113,54 @@ namespace HelloWorld
             player = new Player(name, 100, 10, 5);
         }
 
+        public void SwitchWeapons(Player player)
+        {
+            Item[] inventory = player.GetInv();
+
+            char input= ' ';
+            for(int i = 0; i < inventory.Length; i++)
+            {
+                Console.WriteLine((i+1) + ". " + inventory[i]._name + " \n Damage: " + inventory[i]._statBoost);
+            }
+            Console.WriteLine(">");
+            input = Console.ReadKey().KeyChar;
+            switch (input)
+            {
+                case '1':
+                    {
+                        player.EquipItem(0);
+                        Console.WriteLine("you equipped " + inventory[0]._name);
+                        Console.WriteLine("Base damage increased by: " + inventory[0]._statBoost);
+                        break;
+                    }
+                case '2':
+                    {
+                        player.EquipItem(1);
+                        Console.WriteLine("you equipped " + inventory[1]._name);
+                        Console.WriteLine("Base damage increased by: " + inventory[1]._statBoost);
+                        break;
+                    }
+                case '3':
+                    {
+                        player.EquipItem(2);
+                        Console.WriteLine("you equipped " + inventory[2]._name);
+                        Console.WriteLine("Base damage increased by: " + inventory[2]._statBoost);
+                        break;                                                                        
+                    }
+                default:
+                    {
+                        player.UnequipItem();
+                        Console.WriteLine("You dropped your weapons good luck :)");
+                        break;
+                    }
+            
+            }
+
+            
+        }
+
+
+
         public void startBattle()
         {
             Console.WriteLine("BATTLE");
@@ -104,16 +172,16 @@ namespace HelloWorld
                 _player2.PrintStats();
 
                 char input;
-                GetInput(out input, "Attack", "Repair weapon", "\nPlayer1's turn");
+                GetInput(out input, "Attack", "Change weapon", "\nPlayer1's turn");
                 if(input == '1')
                 {
                     Console.Clear();
-                    _player1.Attack(_player2);
+                    _player2.Attack(_player1);
                 }
                 else if(input == '2')
                 {
                     Console.Clear();
-                    Console.WriteLine("\nPlayer1 did a funny scream");
+                    SwitchWeapons(_player1);
                 }
 
                 if(_player2.GetIsAlive(false))
@@ -141,7 +209,7 @@ namespace HelloWorld
                 else if (input == '2')
                 {
                     Console.Clear();
-                    Console.WriteLine("\nPlayer2 did a funny scream");
+                    SwitchWeapons(_player2);
                 }
 
             }
@@ -169,5 +237,7 @@ namespace HelloWorld
         {
             Console.WriteLine("game over");
         }
+
+
     }
 }

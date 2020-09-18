@@ -8,8 +8,10 @@ namespace HelloWorld
     {
         private string _name;
         private int _health;
-        public int _damage;
+        public int _baseDamage;
         private Item[] _inventory;
+        private Item _currentWeapon;
+        private Item _hands;
         public bool GetIsAlive()
         {
             return _health > 0;
@@ -24,33 +26,56 @@ namespace HelloWorld
         {
             _inventory = new Item[3];
             _health = 400;
-            _damage = 10;
+            _baseDamage = 10;
+            _hands._name = "fists";
+            _hands._statBoost = 0;
         }
 
         public Player(string nameVAl, int healthVal, int damageVAl, int inventorySize)
         {
             _name = nameVAl;
             _health = healthVal;
-            _damage = damageVAl;
+            _baseDamage = damageVAl;
             _inventory = new Item[inventorySize];
+            _hands._name = "fists";
+            _hands._statBoost = 0;
         }
 
         public void EquipItem(int itemIndex)
         {
-           
-            _damage = _inventory[itemIndex].GetStatBoost();
+            if (Contains(itemIndex))
+            {
+                _currentWeapon = _inventory[itemIndex];
+            }
         }
 
+        public void UnequipItem()
+        {
+            _currentWeapon = _hands;
+        }
+        public Item[] GetInv()
+        {
+            return _inventory;
+        }
+
+        public bool Contains(int itemIndex)
+        {
+            if(itemIndex > 0 && itemIndex < _inventory.Length)
+            {
+                return true;
+            }
+            return false;
+        }
         public void AddItemToInv(Item item, int index)
         {
-
+            _inventory[index] = item;
         }
 
         public void PrintStats()
         {
             Console.WriteLine("[" + _name + "]");
             Console.WriteLine("health: " + _health);
-            Console.WriteLine("Damage: " + _damage);
+            Console.WriteLine("Damage: " + _baseDamage);
         }
         public string GetName()
         {
@@ -59,14 +84,17 @@ namespace HelloWorld
 
         public void Attack(Player enemy)
         {
-            enemy.TakeDamage(_damage);
+            int totalDamage = _baseDamage + _currentWeapon._statBoost;
+            enemy.TakeDamage(totalDamage);
         }
+
+        
 
         public void PowerAttack(Player enemy)
         {
-            _damage += 10;
-            enemy.TakeDamage(_damage);
-            _damage -= 10;
+            _baseDamage += 10;
+            enemy.TakeDamage(_baseDamage);
+            _baseDamage -= 10;
         }
 
         private void TakeDamage(int damageVal)
