@@ -51,6 +51,7 @@ namespace HelloWorld
 
         public void UnequipItem()
         {
+<<<<<<< Updated upstream
             _currentWeapon = _hands;
         }
         public Item[] GetInv()
@@ -68,6 +69,8 @@ namespace HelloWorld
         }
         public void AddItemToInv(Item item, int index)
         {
+=======
+>>>>>>> Stashed changes
             _inventory[index] = item;
         }
 
