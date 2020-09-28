@@ -4,38 +4,23 @@ using System.Text;
 
 namespace HelloWorld
 {
-    class Player
+    class Player : Character
     {
-        private string _name;
-        private int _health;
-        public int _baseDamage;
         private Item[] _inventory;
         private Item _currentWeapon;
         private Item _hands;
-        public bool GetIsAlive()
-        {
-            return _health > 0;
-        }
-
-        public bool GetIsAlive(bool Alive = false)
-        {
-            return _health <= 0;
-        }
-
-        public Player()
+        
+        public Player() : base()
         {
             _inventory = new Item[3];
-            _health = 400;
-            _baseDamage = 10;
+  
             _hands._name = "fists";
             _hands._statBoost = 0;
         }
 
-        public Player(string nameVAl, int healthVal, int damageVAl, int inventorySize)
+        public Player(string nameVal, float healthVal, float damageVal, int inventorySize)
+            : base(healthVal, nameVal, damageVal)
         {
-            _name = nameVAl;
-            _health = healthVal;
-            _baseDamage = damageVAl;
             _inventory = new Item[inventorySize];
             _hands._name = "fists";
             _hands._statBoost = 0;
@@ -51,7 +36,6 @@ namespace HelloWorld
 
         public void UnequipItem()
         {
-<<<<<<< Updated upstream
             _currentWeapon = _hands;
         }
         public Item[] GetInv()
@@ -69,45 +53,19 @@ namespace HelloWorld
         }
         public void AddItemToInv(Item item, int index)
         {
-=======
->>>>>>> Stashed changes
             _inventory[index] = item;
         }
 
-        public void PrintStats()
-        {
-            Console.WriteLine("[" + _name + "]");
-            Console.WriteLine("health: " + _health);
-            Console.WriteLine("Damage: " + _baseDamage);
-        }
-        public string GetName()
-        {
-            return _name;
-        }
+        
+      
 
-        public void Attack(Player enemy)
+        public override float Attack(Character enemy)
         {
-            int totalDamage = _baseDamage + _currentWeapon._statBoost;
-            enemy.TakeDamage(totalDamage);
+            float totalDamage = _damage + _currentWeapon._statBoost;
+            return enemy.TakeDamage(totalDamage);
         }
 
         
-
-        public void PowerAttack(Player enemy)
-        {
-            _baseDamage += 10;
-            enemy.TakeDamage(_baseDamage);
-            _baseDamage -= 10;
-        }
-
-        private void TakeDamage(int damageVal)
-        {
-            if(_health > 0)
-            {
-                _health -= damageVal;
-            }
-            Console.WriteLine(_name + " took " + damageVal + " damage!!!!");
-        }
 
     }
 }

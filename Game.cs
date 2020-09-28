@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace HelloWorld
@@ -10,8 +11,14 @@ namespace HelloWorld
         private bool _gameOver = false;
         private Player _player1;
         private Player _player2;
+        private Character _player1Partner;
+        private Character _player2Partner;
         private Item _longSword;
         private Item _dagger;
+        private Item _bow;
+        private Item _crossBow;
+        private Item _bomb;
+        private Item _claymore;
 
         //Run the game
         public void Run()
@@ -68,6 +75,43 @@ namespace HelloWorld
             }
         }
 
+        public void Save()
+        {
+            //Create a new stream writer
+            StreamWriter writer = new StreamWriter("SaveData.txt");
+            //Call save for both instances for players
+            _player1.Save(writer);
+            _player2.Save(writer);
+            //close
+            writer.Close();
+        }
+
+        public void OpenMainMenu()
+        {
+            char input;
+            GetInput(out input, "create character", "load character", "what do you want to do?"
+            if(input == '2')
+            {
+                _player1 = new Player();
+                _player2 = new Player();
+                Load();
+                return;
+            }
+            CreateCharacter(ref _player1);
+            CreateCharacter(ref _player2);
+        }
+        public void Load()
+        {
+            //create a new stream reader
+            StreamReader reader = new StreamReader("SaveData.txt");
+            //Call load for each instance of player to load data
+            _player1.Load(reader);
+            _player2.Load(reader);
+            //close reader
+            reader.Close();
+        }
+
+        
         //equips items to the player
         public void EquipItem()
         {
@@ -176,7 +220,10 @@ namespace HelloWorld
                 if(input == '1')
                 {
                     Console.Clear();
-                    _player2.Attack(_player1);
+                    float damageTaken = _player1.Attack(_player2);
+                    Console.WriteLine(_player1.GetName() + " did " + damageTaken + " damage.");
+                    damageTaken = _player1Partner.Attack(_player2);
+                    Console.WriteLine(_player1Partner.GetName() + " did " + damageTaken + " damage.");
                 }
                 else if(input == '2')
                 {
@@ -204,7 +251,10 @@ namespace HelloWorld
                 if (input == '1')
                 {
                     Console.Clear();
-                    _player2.Attack(_player1);
+                    float damageTaken  = _player2.Attack(_player1);
+                    Console.WriteLine(_player2.GetName() + " did " + damageTaken + " damage.");
+                    damageTaken = _player2Partner.Attack(_player2);
+                    Console.WriteLine(_player2Partner.GetName() + " did " + damageTaken + " damage.");
                 }
                 else if (input == '2')
                 {
@@ -222,7 +272,8 @@ namespace HelloWorld
             _dagger = new Item("dagger", 20);
             CreateCharacter(ref _player1);
             CreateCharacter(ref _player2);
-
+            _player1Partner = new Wizard(120, "Wizard Lizard", 20, 100);
+            _player2Partner = new Wizard(120, "Harry 101", 20, 100);
         }
 
         //Repeated until the game ends
